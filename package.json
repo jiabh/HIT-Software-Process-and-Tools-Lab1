@@ -1,6 +1,6 @@
 {
   "name": "lab1_solve_linear_equations",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "scripts": {
     "test": "jest",
     "dev": "vite ./src/",
