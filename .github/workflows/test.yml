@@ -1,0 +1,20 @@
+name: Test
+on:
+  push:
+    branches-ignore:
+      - 'v*.*'
+  workflow_call:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+
+      - name: Install
+        run: |
+          npm install
+
+      - name: Test
+        run: |
+          npm run test

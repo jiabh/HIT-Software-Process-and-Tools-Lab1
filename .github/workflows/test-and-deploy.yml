@@ -1,0 +1,48 @@
+name: Test and Deploy
+on:
+  push:
+    tags:
+      - v*.*
+jobs:
+  test:
+    uses: jiabh/HIT-Software-Process-and-Tools-Lab1/.github/workflows/test.yml@master
+
+  check-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tagName: ${{ steps.tagName.outputs.tag }}
+    steps:
+      - name: Check Tag
+        uses: olegtarasov/get-tag@v2.1.1
+        id: tagName
+        with:
+          tagRegex: "(v.+)"
+      - name: Output Tag
+        run: |
+          echo "Tag: ${{ needs.check-tag.outputs.tagName }}"
+
+  deploy:
+    needs: [ test, check-tag ]
+    if: ${{ needs.check-tag.outputs.tagName }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.5
+
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm run build
+
+      - name: Get tag name
+        uses: olegtarasov/get-tag@v2.1.1
+
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: dist
+          target-folder: ${{ needs.check-tag.outputs.tagName }}
+          git-config-name: 'github-actions[bot]'
+          git-config-email: 'jiabh@users.noreply.github.com'
