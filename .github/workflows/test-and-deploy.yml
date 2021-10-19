@@ -32,7 +32,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
-          npm run build
+          npm run build -- --base=/HIT-Software-Process-and-Tools-Lab1/${{ needs.check-tag.outputs.tagName }}/
 
       - name: Get tag name
         uses: olegtarasov/get-tag@v2.1.1
