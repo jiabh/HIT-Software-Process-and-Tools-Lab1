@@ -1,4 +1,5 @@
 import {isArray, isMatrix} from './validation';
+import {copyMatrix} from './util';
 
 export function Solution() {
     this.step_array = [];
@@ -14,7 +15,7 @@ Solution.prototype.add = function (Ab) {
     if (!isMatrix(Ab)) {
         throw Ab + ' is not a matrix';
     }
-    this.step_array.push(Ab);
+    this.step_array.push(copyMatrix(Ab));
 }
 
 /**
