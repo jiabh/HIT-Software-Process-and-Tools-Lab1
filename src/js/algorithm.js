@@ -87,3 +87,96 @@ export function gaussian_elimination(Ab) {
     solution.finish(x);
     return solution;
 }
+
+/**
+ * 使用Doolittle算法求解Ax=b的解
+ *
+ * @param {[[number]]} Ab 方程组的增广矩阵
+ * @returns Solution
+ */
+export function doolittle(Ab) {
+    let mat = copyMatrix(Ab);
+
+    if (!isMatrix(mat))
+        throw mat + ' is not a matrix';
+
+    // let M = mat.length; // 行数
+    const N = mat[0].length - 1; // 未知数个数
+
+    const solution = new Solution(); // 中间过程
+
+    // 首先对是否有解进行判断
+    const g = gaussian_elimination(Ab);
+    if (g.xCNT !== 1) {
+        solution.xCNT = g.xCNT;
+        return solution;
+    }
+
+    // 计算过程中的变量
+    let l = [], u = [];
+    let y = new Array(N);
+    let x = new Array(N);
+
+    // 初始化矩阵L、U
+    for (let i = 0; i < N; i++) {
+        l.push([]);
+        u.push([]);
+        for (let j = 0; j < N; j++) {
+            if (i === j) {
+                l[i].push(1);
+            } else {
+                l[i].push(0);
+            }
+            u[i].push(0);
+        }
+    }
+
+    // doolittle分解
+    for (let k = 0; k < N; k++) {
+        for (let j = k; j < N; j++) {
+            u[k][j] = mat[k][j];
+            for (let i = 0; i <= k - 1; i++)
+                u[k][j] -= (l[k][i] * u[i][j]);
+        }
+        for (let i = k + 1; i < N; i++) {
+            l[i][k] = mat[i][k];
+            for (let j = 0; j <= k - 1; j++)
+                l[i][k] -= (l[i][j] * u[j][k]);
+            l[i][k] /= u[k][k];
+        }
+    }
+
+    for (let i = 0; i < N; i++) { // 解Ly = b
+        y[i] = mat[i][N];
+        for (let j = 0; j <= i - 1; j++)
+            y[i] -= (l[i][j] * y[j]);
+    }
+
+    // 构造增广矩阵
+    mat = copyMatrix(u);
+    for (let i = 0; i < N; i++) {
+        mat[i].push(y[i]);
+    }
+    solution.add(mat);
+
+    for (let i = N - 1; i >= 0; i--) {
+        x[i] = mat[i][N] / mat[i][i];
+
+        // 设置当前行
+        mat[i][i] = 1;
+        mat[i][N] = x[i];
+
+        if (i > 0) {
+            for (let j = 0; j < i; j++) { // 将其余行的该列置0
+                mat[j][N] -= x[i] * mat[j][i];
+                mat[j][i] = 0;
+            }
+        }
+
+        solution.add(mat); // 保存当前过程
+    }
+
+    solution.xCNT = 1;
+    solution.x = x;
+    return solution;
+}

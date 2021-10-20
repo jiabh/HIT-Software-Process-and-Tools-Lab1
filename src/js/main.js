@@ -1,4 +1,4 @@
-import {gaussian_elimination} from './algorithm'
+import {gaussian_elimination, doolittle} from './algorithm'
 
 const App = {
     data() {
@@ -8,6 +8,10 @@ const App = {
                 {
                     name: '高斯消元法',
                     func: gaussian_elimination
+                },
+                {
+                    name: 'Doolittle分解法',
+                    func: doolittle
                 },
             ],
             inputMatrix: [[0, 0, 0], [0, 0, 0]], // 用户输入的增广矩阵
@@ -41,6 +45,7 @@ const App = {
         },
         calculate() {
             const func = this.algoArray[this.selectedIndex].func;
+            console.log(func)
             this.result = func(this.inputMatrix);
             console.log(this.result)
         }

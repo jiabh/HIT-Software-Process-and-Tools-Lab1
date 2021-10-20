@@ -1,5 +1,6 @@
 const algorithm = require('../src/js/algorithm');
 const gaussian_elimination = algorithm.gaussian_elimination;
+const doolittle = algorithm.doolittle;
 
 test('testing gaussian elimination', () => {
     let res;
@@ -51,4 +52,18 @@ test('testing gaussian elimination', () => {
     ]);
     expect(res.xCNT).toBe(0);
     expect(res.x).toBe(undefined);
+});
+
+test('testing doolittle', () => {
+    let res;
+
+    // 检查能否正确算出结果
+    res = doolittle([
+        [1, 1, 1, 1, 10],
+        [-1, 2, -3, 1, -2],
+        [3, -3, 6, -2, 7],
+        [-4, 5, 2, -3, 0]
+    ]);
+    expect(res.xCNT).toBe(1);
+    expect(res.x).toStrictEqual([1, 2, 3, 4]);
 });
