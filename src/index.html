@@ -93,6 +93,23 @@
                     </span>
                 </span>
             </div>
+            <p class="font-bold">过程：</p>
+            <div v-if="result" class="mx-auto w-3/4">
+                <div v-for="(step, index) in result.step_array" class="my-3 px-2 py-4 flex items-center rounded shadow">
+                    <div class="mx-6">[{{index + 1}}]</div>
+                    <div class="flex-col flex-grow text-center">
+                        <div v-for="line in step">
+                        <span v-for="(num, j) in line.slice(0, -2)">
+                            {{ num }}X<small>{{ j + 1 }}</small> +
+                        </span>
+                            <span>
+                            {{ line[line.length - 2] }}X<small>{{ line.length - 1 }}</small> = {{ line[line.length - 1] }}
+                        </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 
