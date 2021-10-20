@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线性方程组求解演示</title>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.1.5/vue.global.min.js"></script>
+  <script type="module" crossorigin src="/HIT-Software-Process-and-Tools-Lab1/v3.0/assets/index.d813b803.js"></script>
+  <link rel="stylesheet" href="/HIT-Software-Process-and-Tools-Lab1/v3.0/assets/index.8158138a.css">
+</head>
+<body class="bg-gray-100">
+<div id="app" class="container mx-auto">
+
+    <h1 class="mt-8 w-full text-4xl text-center">线性方程组求解演示</h1>
+
+    <!--算法选择按钮组-->
+    <div class="nav flex p-4 my-8 rounded-xl shadow-md bg-white">
+        <div v-for="(algo, index) in algoArray" class="mr-2">
+            <input :id="'algo' + index" :value="index" v-model="selectedIndex"
+                   name="algo" type="radio" hidden>
+
+            <label :for="'algo' + index" class="rounded-lg py-2 px-4 inline-block shadow-inner transform transition">
+                <span class="select-none">{{algo.name}}</span>
+            </label>
+        </div>
+    </div>
+
+    <!--输入部分-->
+    <div class="p-4 my-8 rounded-xl shadow-md bg-white">
+        <div class="mb-4">
+            <div v-for="(line, i) in inputMatrix">
+                <span v-for="(num, j) in line.slice(0, -1)">
+                    <input class="w-20 text-right" type="number" v-model="inputMatrix[i][j]">
+                    X<small>{{j + 1}}</small>
+                    <span v-if="j !== line.length - 2">+</span>
+                </span>
+                =
+                <span>
+                    <input class="w-20" type="number" v-model="inputMatrix[i][line.length - 1]">
+                </span>
+            </div>
+        </div>
+
+        <div class="flex mb-2">
+            <button class="px-4 py-2 mr-2 rounded-xl shadow-lg bg-indigo-500 text-white
+        transition transform
+        hover:bg-indigo-400 focus:ring focus:ring-indigo-500 focus:ring-offset-2 focus:ring-opacity-50"
+                    @click="addRow">添加行
+            </button>
+            <button class="px-4 py-2 mr-2 rounded-xl shadow-lg bg-indigo-500 text-white
+        transition transform
+        hover:bg-indigo-400 focus:ring focus:ring-indigo-500 focus:ring-offset-2 focus:ring-opacity-50"
+                    @click="addCol">添加列
+            </button>
+            <button class="px-4 py-2 mr-2 rounded-xl shadow-lg bg-indigo-500 text-white
+        transition transform
+        hover:bg-indigo-400
+        focus:ring focus:ring-indigo-500 focus:ring-offset-2 focus:ring-opacity-50
+        disabled:opacity-50 disabled:bg-indigo-400"
+                    :disabled="inputMatrix.length === 1"
+                    @click="removeRow">删除行
+            </button>
+            <button class="px-4 py-2 mr-8 rounded-xl shadow-lg bg-indigo-500 text-white
+        transition transform
+        hover:bg-indigo-400
+        focus:ring focus:ring-indigo-500 focus:ring-offset-2 focus:ring-opacity-50
+        disabled:opacity-50 disabled:bg-indigo-400"
+                    :disabled="inputMatrix[0].length === 2"
+                    @click="removeCol">删除列
+            </button>
+
+            <button class="px-4 py-2 rounded-xl shadow-lg bg-purple-500 text-white font-bold
+        transition transform
+        hover:bg-purple-400 focus:ring focus:ring-purple-500 focus:ring-offset-2 focus:ring-opacity-50"
+                    @click="calculate">计算！
+            </button>
+        </div>
+    </div>
+
+    <!--结果展示部分-->
+    <div class="px-6 py-4 my-8 rounded-xl shadow-md bg-white">
+        <div class="flex flex-col">
+            <p class="font-bold">结果：</p>
+            <div v-if="result">
+                <span v-if="result.xCNT === 0">无解</span>
+                <span v-else-if="result.xCNT === Infinity">无穷多解</span>
+                <span v-else>
+                    <span v-for="(xi, index) in result.x.slice(0, -1)">
+                        X<small>{{index + 1}}</small>={{xi}},
+                    </span>
+                    <span>
+                        X<small>{{result.x.length}}</small>={{result.x[result.x.length - 1]}}
+                    </span>
+                </span>
+            </div>
+            <p class="font-bold">过程：</p>
+            <div v-if="result" class="mx-auto w-3/4">
+                <div v-for="(step, index) in result.step_array" class="my-3 px-2 py-4 flex items-center rounded shadow">
+                    <div class="mx-6">[{{index + 1}}]</div>
+                    <div class="flex-col flex-grow text-center">
+                        <div v-for="line in step">
+                        <span v-for="(num, j) in line.slice(0, -2)">
+                            {{ num }}X<small>{{ j + 1 }}</small> +
+                        </span>
+                            <span>
+                            {{ line[line.length - 2] }}X<small>{{ line.length - 1 }}</small> = {{ line[line.length - 1] }}
+                        </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
