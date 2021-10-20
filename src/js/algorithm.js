@@ -1,6 +1,7 @@
 import {Solution} from './datatype';
 import {isMatrix} from './validation';
 import {copyMatrix} from './util'
+
 /**
  * 使用高斯消元法求解Ax=b的解
  *
@@ -18,8 +19,6 @@ export function gaussian_elimination(Ab) {
 
     const solution = new Solution(); // 中间过程
 
-    // let i, j, k;
-
     // 消元
     for (let i = 0; i < M; i++) { // 对于第i行（由于需要判断最后一行是否全0，故需要让i === M - 1出现）
         // 首先判断是否为全0行
@@ -36,6 +35,10 @@ export function gaussian_elimination(Ab) {
                 M--;
                 continue;
             }
+        }
+
+        if (i === M - 1) { // 最后一行不需要更新之后的行（不存在），直接返回
+            break;
         }
 
         for (let j = i + 1; j < M; j++) { // 对于剩余的每一个第j行
@@ -67,9 +70,15 @@ export function gaussian_elimination(Ab) {
     for (let i = N - 1; i >= 0; i--) {
         x[i] = mat[i][N] / mat[i][i];
 
-        for (let j = 0; j < i; j++) { // 将其余行的该列置0
-            mat[j][N] -= mat[i][N] * mat[j][i] / mat[i][i];
-            mat[j][i] = 0;
+        // 设置当前行
+        mat[i][i] = 1;
+        mat[i][N] = x[i];
+
+        if (i > 0) {
+            for (let j = 0; j < i; j++) { // 将其余行的该列置0
+                mat[j][N] -= x[i] * mat[j][i];
+                mat[j][i] = 0;
+            }
         }
 
         solution.add(mat); // 保存当前过程
